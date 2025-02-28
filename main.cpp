@@ -1,5 +1,6 @@
 #include <iostream>
 #include <vector>
+#include <algorithm>
 #include <string>
 #include <map>
 #include <ctime>
@@ -17,6 +18,81 @@ using namespace std;
         TODO:1e. If change is logical, then make change, else no changes
         TODO:1f. Maybe add a check to see if taxi belongs to firm
 */
+void changeStatus(int roleID, int firmID, int taxiID, int newStatusID)
+{
+    // find Firm by Firm ID
+    Firm tempFirm;
+    for (Firm f: firms)
+    {
+        if (f.getFirmID() == firmID)
+        {
+            tempFirm = f;
+            break;
+        }
+        else 
+        {
+            cout << "Firm not found" << endl;
+            return;
+        }
+    }
+    // find Taxi in Firms taxi list by Taxi ID
+    Taxi tempTaxi;
+    tempTaxi = tempFirm.findTaxiByID(taxiID);
+    if (tempTaxi == nullptr)
+    {
+        cout << "Taxi not found" << endl;
+        return;
+    }
+    // check if new status is different from current status
+    if (tempTaxi->getStatusID() == newStatusID)
+    {
+        cout << "New status is the same as current status" << endl;
+        return;
+    }
+    // if status is different proceed to logic check depending on role
+    // switch cases for firm
+    else if (roleID == 101)
+    {
+        switch (newStatusID)
+        {
+        case 202:
+            /* code */
+            break;
+        case 203:
+            /* code */
+            break;
+        case 204:
+            /* code */
+            break;    
+        
+        default:
+            break;
+        }
+    }
+    // switch cases for taxi
+    else if (roleID == 102)
+    {
+        switch (newStatusID)
+        {
+        case 201:
+            /* code */
+            break;
+        case 202:
+            /* code */
+            break;
+        case 203:
+            /* code */
+            break;
+        case 204:
+            /* code */
+            break;
+
+        default:
+            break;
+        }
+    }
+    else { cout << "Role not found" << endl; }
+}
 /* 2. Data lists/ Classes
         DONE:2a. Firm Class( Role ID(?), Firm ID, Taxi list)
             DONE:2aa. Taxi Class(Role ID(?), Taxi ID, Status ID, Timestamp) lists belonging to Firm
@@ -118,6 +194,23 @@ class Firm
             taxiList.push_back(t);
         }
 
+        // DONE: Function to find taxi by ID
+        Taxi* findTaxiByID(int taxiID)
+        {
+            auto it = find_if(taxiList.begin(), taxiList.end(), [taxiID](const Taxi& t)
+            {
+                return t.getTaxiID() == taxiID;
+            });
+            // Return pointer to taxi if found
+            if (it != taxiList.end())
+            {
+                return &(*it);
+            }
+            else
+            {
+                cout << "Taxi not found" << endl;
+                return nullptr;
+            }
         // Print firm info
         void printFirm()
         {
@@ -128,6 +221,9 @@ class Firm
             }
         }
 };
+
+// Array toi hold firms
+const Firm firms[] = {Firm(301), Firm(302), Firm(303)};
 /* 3. Main function
         TODO:3a. Write some test data to test the function
         TODO:3b. Call Status Change function
