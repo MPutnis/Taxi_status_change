@@ -10,13 +10,13 @@ using namespace std;
 // Task list:
 
 /* 1. Status change function
-        TODO: 1a. Input data: Firm ID, Taxi ID, Role ID, NewStatus ID
-        TODO:1b. Output: Change Taxi Status and Timestamp or deny any changes
-        TODO:1c. Retrieve Current status id and timestamp, compare  if 
+        DONE: 1a. Input data: Firm ID, Taxi ID, Role ID, NewStatus ID
+        DONE:1b. Output: Change Taxi Status and Timestamp or deny any changes
+        DONE:1c. Retrieve Current status id and timestamp, compare  if 
             status IDs are different, proceed if yes, else end function
-        TODO:1d. Determine Role of Change initializer
-        TODO:1e. If change is logical, then make change, else no changes
-        TODO:1f. Maybe add a check to see if taxi belongs to firm
+        DONE:1d. Determine Role of Change initializer
+        DONE:1e. If change is logical, then make change, else no changes
+        DONE:1f. Maybe add a check to see if taxi belongs to firm
 */
 void changeStatus(int roleID, int firmID, int taxiID, int newStatusID);
 /* 2. Data lists/ Classes
@@ -153,7 +153,7 @@ class Firm
 Firm firms[] = {Firm(301), Firm(302), Firm(303)};
 /* 3. Main function
         DONE:3a. Write some test data to test the function
-        TODO:3b. Call Status Change function
+        DONE:3b. Call Status Change function
         DONE:3c. Print out results
 */
 // function to print out all firms and their taxis
