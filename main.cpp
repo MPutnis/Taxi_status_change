@@ -149,13 +149,32 @@ class Firm
         }
 };
 
-// Array toi hold firms
+// Array to hold firms
 Firm firms[] = {Firm(301), Firm(302), Firm(303)};
 /* 3. Main function
-        TODO:3a. Write some test data to test the function
+        DONE:3a. Write some test data to test the function
         TODO:3b. Call Status Change function
-        TODO:3c. Print out results
+        DONE:3c. Print out results
 */
+// function to print out all firms and their taxis
+void printFirms()
+{
+    for (Firm f: firms)
+    {
+        f.printFirm();
+    }
+}
+
+void printFirmByID(int firmID)
+{
+    for (Firm f: firms)
+    {
+        if (f.getFirmID() == firmID)
+        {
+            f.printFirm();
+        }
+    }
+}
 
 int main()
 {
@@ -173,12 +192,76 @@ int main()
     firms[2].addTaxi(Taxi(30303, 203));
     firms[2].addTaxi(Taxi(30304, 204));
 
-    // Print out firm info
-    for (Firm f: firms)
+    // user interface
+    int roleID=0, firmID=0, taxiID=0, newStatusID=0, choice=0;
+    do
     {
-        f.printFirm();
-    }
+        cout << "1. Print all firms and their taxis" << endl;
+        cout << "2. Change status" << endl;        
+        cout << "3. Exit" << endl;
+        cout << "Enter choice: ";
+        cin >> choice;
+        switch (choice)
+        {
+            // option to print all firms and their taxis
+            case 1:
+                printFirms();
+                break;
 
+            // offer to change a status for a taxi
+            case 2:
+                // role options:
+                cout << "Choose from which role you will change status.\nValid Role IDs: " << endl;
+                for (auto const& x : Roles)
+                {
+                    cout << x.first << ": " << x.second << endl;
+                }
+                cout << "Enter Role ID: ";
+                cin >> roleID;
+
+                // Valid Firm IDs
+                cout << "Valid Firm IDs: " << endl;
+                for( Firm f: firms)
+                {
+                    cout << f.getFirmID() << endl;
+                }
+                cout << "Enter Firm ID: ";
+                cin >> firmID;
+
+                // Valid Taxi IDs
+                cout << "Valid Taxi IDs: " << endl;
+                printFirmByID(firmID);
+                cout << "Enter Taxi ID: ";
+                cin >> taxiID;
+                
+                // Possible Status IDs
+                cout << "Possible Statuses: " << endl;
+                for (auto const& x : Statuses)
+                {
+                    cout << x.first << ": " << x.second << endl;
+                } 
+                cout << "Enter New Status ID: ";
+                cin >> newStatusID;
+                changeStatus(roleID, firmID, taxiID, newStatusID);
+                break;
+            
+            // end program    
+            case 3:
+                cout << "Exiting program." << endl;
+                break;
+
+            default:
+                cout << "Invalid choice." << endl;
+                break;
+        }
+    } while (choice != 3);
+    
+    
+    
+    
+
+
+/* Uncomment to run some tests
     // switch tests
     // firm makes change
     cout << "Firm makes change:" << endl;
@@ -204,7 +287,7 @@ int main()
     // role not found
     cout << "Role not found:" << endl;
     changeStatus(103, 303, 30301, 202);
-
+*/
     return 0;
 }
 
@@ -220,12 +303,8 @@ void changeStatus(int roleID, int firmID, int taxiID, int newStatusID)
             tempFirm = &f;
             break;
         }
-        // else 
-        // {
-        //     cout << "Firm not found." << endl;
-        //     return;
-        // }
     }
+    // if Firm not found, end function
     if (tempFirm == nullptr)
     {
         cout << "Firm not found." << endl;
@@ -245,47 +324,131 @@ void changeStatus(int roleID, int firmID, int taxiID, int newStatusID)
         return;
     }
     // if status is different proceed to logic check depending on role
-    // switch cases for firm
+    // switches compare new status to current status to determine if change is valid 
+    // switch cases for changes initiated by Firm
     else if (roleID == 101)
     {
         switch (newStatusID)
         {
         case 202:
-            cout << "Reached switch case: " << Roles[101] << ", "<< Statuses[202] << endl;	
+            //cout << "Reached switch case: " << Roles[101] << ", "<< Statuses[202] << endl;
+            // Firm  can change taxi status to waiting only from break status
+            if (tempTaxi->getStatusID() == 204)
+            {
+                tempTaxi->setStatusID(newStatusID);
+                tempTaxi->setTimestamp();
+                cout << "Status changed: " << endl;
+                tempTaxi->printTaxi();
+            }
+            else
+            {
+                cout << "Taxi has to be in " << Statuses[204] << " status, for Firm to change to " << Statuses[202] << " status." << endl;
+            }	
             break;
         case 203:
-            cout << "Reached switch case: " << Roles[101] << ", "<< Statuses[203] << endl;
+            //cout << "Reached switch case: " << Roles[101] << ", "<< Statuses[203] << endl;
+            // Firm can assign a client to a taxi that is at work and not with a client
+            if (tempTaxi->getStatusID() == 202 || tempTaxi->getStatusID() == 204)
+            {
+                tempTaxi->setStatusID(newStatusID);
+                tempTaxi->setTimestamp();
+                cout << "Status changed: " << endl;
+                tempTaxi->printTaxi();
+            }
+            else
+            {
+                cout << "Taxi has to be in " << Statuses[202] << " or " << Statuses[204] <<
+                " status, for Firm to assign a client." << endl;
+            }
             break;
         case 204:
-            cout << "Reached switch case: " << Roles[101] << ", "<< Statuses[204] << endl;
+            //cout << "Reached switch case: " << Roles[101] << ", "<< Statuses[204] << endl;
+            // Taxi has to be in waiting status, for Firm to send it on break
+            if (tempTaxi->getStatusID() == 202)
+            {
+                tempTaxi->setStatusID(newStatusID);
+                tempTaxi->setTimestamp();
+                cout << "Status changed: " << endl;
+                tempTaxi->printTaxi();
+            }
+            else
+            {
+                cout << "Taxi has to be in " << Statuses[202] << " status, for Firm to send it on break." << endl;
+            }
             break;    
         
         default:
-            cout << "Reached switch case: " << Roles[101] << ", default"<< endl;
-            break;
+            //cout << "Reached switch case: " << Roles[101] << ", default"<< endl;
+            cout << "Invalid status." << endl;
+            return;
         }
     }
-    // switch cases for taxi
+    // switch cases for changes initiated by Taxi
     else if (roleID == 102)
     {
         switch (newStatusID)
         {
         case 201:
-            cout << "Reached switch case: " << Roles[102] << ", "<< Statuses[201] << endl;
+            //cout << "Reached switch case: " << Roles[102] << ", "<< Statuses[201] << endl;
+            // Taxi ends work day, has to be in waiting status to end work day
+            if (tempTaxi->getStatusID() == 202)
+            {
+                tempTaxi->setStatusID(newStatusID);
+                tempTaxi->setTimestamp();
+                cout << "Status changed: " << endl;
+                tempTaxi->printTaxi();
+            }
+            else
+            {
+                cout << "Taxi has to be in " << Statuses[202] << " status to end work day." << endl;
+            }
             break;
+
         case 202:
-            cout << "Reached switch case: " << Roles[102] << ", "<< Statuses[202] << endl;
+            //cout << "Reached switch case: " << Roles[102] << ", "<< Statuses[202] << endl;
+            // Waiting for client, can be reached from any status
+            tempTaxi->setStatusID(newStatusID);
+            tempTaxi->setTimestamp();
+            cout << "Status changed: " << endl;
+            tempTaxi->printTaxi();
             break;
+
         case 203:
-            cout << "Reached switch case: " << Roles[102] << ", "<< Statuses[203] << endl;
+            //cout << "Reached switch case: " << Roles[102] << ", "<< Statuses[203] << endl;
+            // Ferrying a client, can be reached( by Taxi) from waiting status
+            if (tempTaxi->getStatusID() == 202)
+            {
+                tempTaxi->setStatusID(newStatusID);
+                tempTaxi->setTimestamp();
+                cout << "Status changed: " << endl;
+                tempTaxi->printTaxi();
+            }
+            else
+            {
+                cout << "Taxi has to be in " << Statuses[202] << " status to ferry a client." << endl;
+            }
             break;
+
         case 204:
-            cout << "Reached switch case: " << Roles[102] << ", "<< Statuses[204] << endl;
+            //cout << "Reached switch case: " << Roles[102] << ", "<< Statuses[204] << endl;
+            // Taxi goes on a break, can be reached from waiting status
+            if (tempTaxi->getStatusID() == 202)
+            {
+                tempTaxi->setStatusID(newStatusID);
+                tempTaxi->setTimestamp();
+                cout << "Status changed: " << endl;
+                tempTaxi->printTaxi();
+            }
+            else
+            {
+                cout << "Taxi has to be in " << Statuses[202] << " status to go on a break." << endl;
+            }
             break;
 
         default:
-            cout << "Reached switch case: " << Roles[102] << ", default"<< endl;
-            break;
+            //cout << "Reached switch case: " << Roles[102] << ", default"<< endl;
+            cout << "Invalid status." << endl;
+            return;
         }
     }
     else { cout << "Role not found." << endl; }
